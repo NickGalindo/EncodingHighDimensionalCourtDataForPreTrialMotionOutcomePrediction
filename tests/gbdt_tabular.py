@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 
 
-oc: OrdinalEncoder = OrdinalEncoder(encoded_missing_value=0)
+oc: OrdinalEncoder = OrdinalEncoder(encoded_missing_value=-1)
 
 train_df: pd.DataFrame = pd.read_csv("/mnt/research/aguiarlab/proj/law/code/law/tabtransformers-lightning/tmp_data/train.csv")
 
