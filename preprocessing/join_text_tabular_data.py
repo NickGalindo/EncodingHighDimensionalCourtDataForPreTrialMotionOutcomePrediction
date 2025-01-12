@@ -21,3 +21,7 @@ print(f"text_data_paths shape after building DocumentNo: {text_data_paths.shape}
 full_data_with_documentNo = pd.merge(tabular_data, mapping_DocumentNo_CaseRefNum, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="inner")
 
 print(f"left join on tabular data and the document no to case reference number mapping shape: {full_data_with_documentNo.shape}")
+
+full_data_with_documentNo = pd.merge(full_data_with_documentNo, text_data_paths, left_on="DocumentNo", right_on="document_no", how="inner")
+
+print(f"left join on previous calculated tabular data with document no on the text data and their numbers to correlate filepaths with tabular data shape: {full_data_with_documentNo.shape}")
