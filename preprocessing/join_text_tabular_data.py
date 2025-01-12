@@ -17,6 +17,11 @@ text_data_paths["document_no"] = text_data_paths["document_no"].astype(int)
 
 print(f"text_data_paths shape after building DocumentNo: {text_data_paths.shape}")
 
+case_ref_num_not_in_mapping = set(tabular_data["CaseReferenceNumber"].tolist()) - set(mapping_DocumentNo_CaseRefNum["CaseRefNum"].tolist())
+document_no_not_in_mapping = set(text_data_paths["DocumentNo"].tolist()) - set(mapping_DocumentNo_CaseRefNum["CaseRefNum"].tolist())
+
+print(f"Amount of case reference numbers in tabular data not in the judcaseid_docid_translationtable: {len(case_ref_num_not_in_mapping)}")
+print(f"Amount of document no in text data not in the judcaseid_docid_translationtable: {len(document_no_not_in_mapping)}")
 
 full_data_with_documentNo = pd.merge(tabular_data, mapping_DocumentNo_CaseRefNum, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="inner")
 
