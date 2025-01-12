@@ -11,8 +11,9 @@ print(f"text_data_paths shape: {text_data_paths.shape}")
 print(f"mapping_DocumentNo_CaseRefNum shape: {mapping_DocumentNo_CaseRefNum.shape}")
 
 
-text_data_paths["document_no"] = text_data_paths["filepath"].str.extract(r"(\d+)(?!.*\d)").astype(int)
+text_data_paths["document_no"] = text_data_paths["filepath"].str.extract(r"(\d+)(?!.*\d)")
 text_data_paths = text_data_paths.dropna()
+text_data_paths["document_no"] = text_data_paths["document_no"].astype(int)
 
 print(f"text_data_paths shape after building DocumentNo: {text_data_paths.shape}")
 
