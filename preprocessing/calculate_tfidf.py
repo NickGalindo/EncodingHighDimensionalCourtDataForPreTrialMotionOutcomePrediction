@@ -13,7 +13,7 @@ corpus = set(train_data["filepath"].dropna().unique().tolist() + val_data["filep
 full_corpus = []
 
 for doc_path in corpus:
-    with open(doc_file, "r") as file: #type:ignore
+    with open(doc_path, "r") as file:
         full_corpus.append(file.read())
 
 
