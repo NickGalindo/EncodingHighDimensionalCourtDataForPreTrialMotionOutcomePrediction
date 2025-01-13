@@ -27,14 +27,14 @@ print(tabular_data.columns)
 print(mapping_DocumentNo_CaseRefNum.columns)
 
 full_data_with_documentNo = pd.merge(tabular_data, mapping_DocumentNo_CaseRefNum, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="inner")
-a = pd.merge(tabular_data, mapping_DocumentNo_CaseRefNum, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="inner")
+a = full_data_with_documentNo.copy()
 
 print(full_data_with_documentNo.columns)
 
 print(f"left join on tabular data and the document no to case reference number mapping shape: {full_data_with_documentNo.shape}")
 
 full_data_with_documentNo = pd.merge(full_data_with_documentNo, text_data_paths, left_on="DocumentNo", right_on="document_no", how="inner")
-b = pd.merge(full_data_with_documentNo, text_data_paths, left_on="DocumentNo", right_on="document_no", how="inner")
+b = full_data_with_documentNo.copy()
 
 print(text_data_paths.columns)
 print(full_data_with_documentNo.columns)
