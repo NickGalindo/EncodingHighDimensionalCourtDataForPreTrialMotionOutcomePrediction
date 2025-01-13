@@ -42,6 +42,7 @@ print(full_data_with_documentNo.columns)
 print(f"left join on previous calculated tabular data with document no on the text data and their numbers to correlate filepaths with tabular data shape: {full_data_with_documentNo.shape}")
 
 print(set(a.columns)-set(b.columns))
+print(set(b.columns)-set(a.columns))
 print(a.columns)
 print(b.columns)
 
