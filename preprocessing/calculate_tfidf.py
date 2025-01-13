@@ -8,6 +8,6 @@ train_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped
 val_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_val.csv")
 test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_test.csv")
 
-corpus = set(train_data["filepath"].unique().tolist() + val_data["filepath"].unique().tolist() + test_data["filepath"].unique().tolist())
+corpus = set(train_data["filepath"].dropna().unique().tolist() + val_data["filepath"].dropna().unique().tolist() + test_data["filepath"].dropna().unique().tolist())
 
 print(corpus)
