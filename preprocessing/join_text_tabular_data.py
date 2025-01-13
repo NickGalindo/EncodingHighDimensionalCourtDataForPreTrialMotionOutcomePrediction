@@ -32,6 +32,7 @@ full_data_with_documentNo = pd.merge(full_data_with_documentNo, text_data_paths,
 b = pd.merge(full_data_with_documentNo, text_data_paths, left_on="DocumentNo", right_on="document_no", how="inner")
 
 print(text_data_paths.columns)
+print(full_data_with_documentNo.columns)
 
 print(f"left join on previous calculated tabular data with document no on the text data and their numbers to correlate filepaths with tabular data shape: {full_data_with_documentNo.shape}")
 
