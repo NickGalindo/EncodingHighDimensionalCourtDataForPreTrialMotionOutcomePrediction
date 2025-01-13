@@ -12,7 +12,7 @@ text_data_paths["document_no"] = text_data_paths["filepath"].str.extract(r'(\d+)
 mapping_DocumentNo_CaseRefNum = pd.read_csv("/mnt/research/aguiarlab/proj/law/jz_script/judcaseid_docid_translationtable.tsv", sep="\t")
 
 
-full_mapper = pd.merge(mapping_DocumentNo_CaseRefNum, text_data_paths, left_on="DocumentNo ", right_on="document_no", how="left")
+full_mapper = pd.merge(mapping_DocumentNo_CaseRefNum, text_data_paths, left_on="DocumentNo", right_on="document_no", how="left")
 
 
 print(f"shape train_data:\t\t{train_data.shape}")
@@ -21,9 +21,9 @@ print(f"shape test_data:\t\t{test_data.shape}")
 
 print(f"Number of CaseReferenceNumber without file:\t{full_mapper['filepath'].isna().sum()}")
 
-train_data_full = pd.merge(train_data, full_mapper, left_on="CaseReferenceNumber", right_on="CaseRefNum", how="left")
-val_data_full = pd.merge(val_data, full_mapper, left_on="CaseReferenceNumber", right_on="CaseRefNum", how="left")
-test_data_full = pd.merge(test_data, full_mapper, left_on="CaseReferenceNumber", right_on="CaseRefNum", how="left")
+train_data_full = pd.merge(train_data, full_mapper, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="left")
+val_data_full = pd.merge(val_data, full_mapper, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="left")
+test_data_full = pd.merge(test_data, full_mapper, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="left")
 
 print(f"shape mapped train data:\t\t{train_data_full.shape}")
 print(f"shape mapped val data:\t\t{val_data_full.shape}")
