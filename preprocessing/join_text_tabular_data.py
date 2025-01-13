@@ -40,3 +40,7 @@ print()
 print(f"mapped train data without file:\t{train_data_full['filepath'].isna().sum()}")
 print(f"mapped val data without file:\t{val_data_full['filepath'].isna().sum()}")
 print(f"mapped test data without file:\t{test_data_full['filepath'].isna().sum()}")
+
+train_data_full.to_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_train.csv")
+val_data_full.to_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_val.csv")
+test_data_full.to_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_test.csv")
