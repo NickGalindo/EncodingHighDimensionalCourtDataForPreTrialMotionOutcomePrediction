@@ -9,6 +9,8 @@ test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/full_te
 
 text_data_paths = pd.read_csv("/mnt/research/aguiarlab/proj/law/pdfs/all_txt_files_abs_path.txt", names=["filepath"], header=None)
 text_data_paths["document_no"] = text_data_paths["filepath"].str.extract(r'(\d+)(?=\D*$)')
+text_data_paths = text_data_paths.dropna()
+text_data_paths["document_no"] = text_data_paths["document_no"].astype(int)
 mapping_DocumentNo_CaseRefNum = pd.read_csv("/mnt/research/aguiarlab/proj/law/jz_script/judcaseid_docid_translationtable.tsv", sep="\t")
 
 
