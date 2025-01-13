@@ -9,3 +9,5 @@ val_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_f
 test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_test.csv")
 
 corpus = set(train_data["filepath"].unique().tolist() + val_data["filepath"].unique().tolist() + test_data["filepath"].unique().tolist())
+
+print(corpus)
