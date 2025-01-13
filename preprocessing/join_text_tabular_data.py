@@ -36,4 +36,4 @@ b = full_data_with_documentNo.copy()
 print(f"left join on previous calculated tabular data with document no on the text data and their numbers to correlate filepaths with tabular data shape: {full_data_with_documentNo.shape}")
 
 
-print(full_data_with_documentNo["CaseReferenceNumber"].duplicated())
+print(full_data_with_documentNo["CaseReferenceNumber"][full_data_with_documentNo["CaseReferenceNumber"].duplicated()].unique())
