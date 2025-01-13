@@ -24,9 +24,16 @@ print(f"Amount of case reference numbers in tabular data not in the judcaseid_do
 print(f"Amount of document no in text data not in the judcaseid_docid_translationtable: {len(document_no_not_in_mapping)}")
 
 full_data_with_documentNo = pd.merge(tabular_data, mapping_DocumentNo_CaseRefNum, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="inner")
+a = pd.merge(tabular_data, mapping_DocumentNo_CaseRefNum, left_on="CaseReferenceNumber", right_on="CaseRefNum ", how="inner")
 
 print(f"left join on tabular data and the document no to case reference number mapping shape: {full_data_with_documentNo.shape}")
 
 full_data_with_documentNo = pd.merge(full_data_with_documentNo, text_data_paths, left_on="DocumentNo", right_on="document_no", how="inner")
+b = pd.merge(full_data_with_documentNo, text_data_paths, left_on="DocumentNo", right_on="document_no", how="inner")
 
 print(f"left join on previous calculated tabular data with document no on the text data and their numbers to correlate filepaths with tabular data shape: {full_data_with_documentNo.shape}")
+
+mismatch = pd.merge(a, b, on=a.columns, how="outer", indicator=True)
+extra = mismatch[mismatch["_merge"] != "both"]
+
+print(extra)
