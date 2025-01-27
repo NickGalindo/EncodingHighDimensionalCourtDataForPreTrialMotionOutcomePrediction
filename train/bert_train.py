@@ -118,7 +118,7 @@ trainer.train()
 results = trainer.evaluate()
 print(f"EVALUATIONRESULTS: {results}")
 
-pred, labels = trainer.predict(test_tokenized)
+pred, labels, metrics = trainer.predict(test_tokenized)
 
 pred_classes = np.argmax(pred, axis=1)
 
