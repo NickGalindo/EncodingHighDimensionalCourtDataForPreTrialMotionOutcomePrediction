@@ -14,7 +14,10 @@ corpus["document_no"] = corpus["document_no"].astype(int)
 full_corpus = []
 full_corpus_document_no = []
 
+some_index = 0
 for _, row in corpus.iterrows():
+    print(f"DOCUMENT EXTRACTION PROGRESS {some_index}/{len(corpus)}")
+    some_index += 1
     with open(row["filepath"], "r") as file: #type: ignore
         cleaned = re.sub(r"[^a-zA-Z0-9\s]", " ", file.read())
         cleaned = re.sub(r"\b[a-zA-Z]\b", "", cleaned)
@@ -27,7 +30,7 @@ feature_names = np.array(tfidf_vectorizer.get_feature_names_out())
 
 corpus_tfidf = []
 for i, doc in enumerate(full_corpus):
-    print(f"PROGRESS {i}/{len(full_corpus)}")
+    print(f"SUBSETTING PROGRESS {i}/{len(full_corpus)}")
     doc_tfidf_scores = tfidf_matrix[i].toarray().flatten() # type: ignore
     word_scores = list(zip(feature_names, doc_tfidf_scores))
 
