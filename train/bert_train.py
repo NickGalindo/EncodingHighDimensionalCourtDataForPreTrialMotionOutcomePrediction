@@ -74,11 +74,12 @@ def computeMetrics(eval_pred):
 
 training_args = TrainingArguments(
     output_dir='/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/results',          # output directory for the model and logs
-    evaluation_strategy="epoch",     # evaluate after each epoch
+    eval_strategy="epoch",     # evaluate after each epoch
+    save_strategy="epoch",
     learning_rate=5e-5,              # learning rate
     per_device_train_batch_size=8,   # batch size for training
     per_device_eval_batch_size=8,    # batch size for evaluation
-    num_train_epochs=50,              # number of training epochs
+    num_train_epochs=3,              # number of training epochs
     weight_decay=0.01,               # strength of weight decay
     logging_dir='/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/logs',            # directory for storing logs
     logging_steps=10,                # log every 10 steps
@@ -97,3 +98,17 @@ trainer = Trainer(
 )
 
 trainer.train()
+
+results = trainer.evaluate()
+print(f"EVALUATIONRESULTS: {results}")
+
+pred, labels = trainer.predict(test_tokenized)
+
+pred_classes = np.argmax(pred, axis=1)
+
+accuracy = accuracy_score(labels, predicted_classes)
+
+print(f"ACCURACY ON TEST: {accuracy}")
+
+model.save_pretrained("/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/models/tfigm")
+tokenizer.save_pretrained("/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/models/tfidf")
