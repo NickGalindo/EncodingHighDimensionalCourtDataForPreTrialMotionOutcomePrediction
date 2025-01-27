@@ -71,7 +71,7 @@ feature_names = np.array(tfigm_vectorizer.vectorizer.get_feature_names_out())
 corpus_tfigm = []
 for i, doc in enumerate(full_corpus):
     print(f"SUBSETTING PROGRESS {i}/{len(full_corpus)}")
-    doc_tfigm_scores = tfigm_matrix[i].toarray().flatten()
+    doc_tfigm_scores = tfigm_matrix[i].flatten()
     word_scores = list(zip(feature_names, doc_tfigm_scores))
     sorted_words = [word for word, score in sorted(word_scores, key=lambda x: x[1], reverse=True)]
     sorted_words = sorted_words[:512]
