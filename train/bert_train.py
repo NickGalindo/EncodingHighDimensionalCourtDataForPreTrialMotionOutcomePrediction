@@ -25,19 +25,22 @@ class LegalDocDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.labels)
 
-train_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_train.csv")
+base_dir = "/home/coder/base/PaperData"
+#base_dir = "/mnt/research/aguiarlab/proj/law/data/PaperData/"
+
+train_data = pd.read_csv(os.path.join(base_dir, "mapped_full_train.csv"))
 train_data = train_data[["filepath", "document_no", "MotionResultCode"]]
 train_data["label"] = train_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
-val_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_val.csv")
+val_data = pd.read_csv(os.path.join(base_dir, "mapped_full_val.csv"))
 val_data = val_data[["filepath", "document_no", "MotionResultCode"]]
 val_data["label"] = val_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
-test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_test.csv")
+test_data = pd.read_csv(os.path.join(base_dir, "mapped_full_test.csv"))
 test_data = test_data[["filepath", "document_no", "MotionResultCode"]]
 test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
-full_corpus = pickle.load(open(os.path.join("/mnt/research/aguiarlab/proj/law/data/PaperData/textData/tfidf", "indexed_text.pkl"), "rb"))
+full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/tfidf"), "indexed_text.pkl"), "rb"))
 
 train_data["text"] = train_data["document_no"].map(full_corpus)
 val_data["text"] = val_data["document_no"].map(full_corpus)
@@ -77,7 +80,7 @@ def computeMetrics(eval_pred):
 
 
 training_args = TrainingArguments(
-    output_dir='/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/results',          # output directory for the model and logs
+    output_dir=os.path.join(base_dir, "bertTraining/results"),          # output directory for the model and logs
     eval_strategy="epoch",     # evaluate after each epoch
     save_strategy="epoch",
     learning_rate=5e-5,              # learning rate
@@ -85,7 +88,7 @@ training_args = TrainingArguments(
     per_device_eval_batch_size=8,    # batch size for evaluation
     num_train_epochs=3,              # number of training epochs
     weight_decay=0.01,               # strength of weight decay
-    logging_dir='/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/logs',            # directory for storing logs
+    logging_dir=os.path.join(base_dir, "bertTraining/logs"),            # directory for storing logs
     logging_steps=10,                # log every 10 steps
     save_steps=10,                   # save checkpoint every 10 steps
     load_best_model_at_end=True,     # load the best model when finished training (based on validation)
@@ -114,5 +117,5 @@ accuracy = accuracy_score(labels, predicted_classes)
 
 print(f"ACCURACY ON TEST: {accuracy}")
 
-model.save_pretrained("/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/models/tfigm")
-tokenizer.save_pretrained("/mnt/research/aguiarlab/proj/law/data/PaperData/bertTraining/models/tfidf")
+model.save_pretrained(os.path.join(base_dir, "bertTraining/models/tfigm"))
+tokenizer.save_pretrained(os.path.join(base_dir, "bertTraining/models/tfidf"))
