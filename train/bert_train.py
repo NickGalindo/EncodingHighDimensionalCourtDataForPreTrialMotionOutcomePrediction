@@ -58,6 +58,10 @@ test_dataset = Dataset.from_pandas(test_data)
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", num_labels=2)
 model = BertForSequenceClassification.from_pretrained("bert-base-uncased")
 
+model.cuda()
+torch.cuda.empty_cache()
+print("INITIATED CUDA")
+
 def tokenizeFunction(some_dataset):
     return tokenizer(some_dataset["text"], padding="max_length", truncation=True, max_length=512)
 
