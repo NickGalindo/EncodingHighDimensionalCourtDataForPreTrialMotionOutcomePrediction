@@ -80,6 +80,7 @@ training_args = TrainingArguments(
     logging_steps=10,                # log every 10 steps
     save_steps=10,                   # save checkpoint every 10 steps
     load_best_model_at_end=True,     # load the best model when finished training (based on validation)
+    fp16=True
 )
 
 trainer = Trainer(
