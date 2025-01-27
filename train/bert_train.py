@@ -122,7 +122,7 @@ pred, labels, metrics = trainer.predict(test_tokenized)
 
 pred_classes = np.argmax(pred, axis=1)
 
-accuracy = accuracy_score(labels, predicted_classes)
+accuracy = accuracy_score(labels, pred_classes)
 
 print(f"ACCURACY ON TEST: {accuracy}")
 
