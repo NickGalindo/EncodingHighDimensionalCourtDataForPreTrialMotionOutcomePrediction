@@ -2,6 +2,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
 import pandas as pd
 import re
+import os
+import pickle
 
 
 corpus = pd.read_csv("/mnt/research/aguiarlab/proj/law/pdfs/all_txt_files_abs_path.txt", names=["filepath"], header=None)
@@ -25,7 +27,7 @@ feature_names = np.array(tfidf_vectorizer.get_feature_names_out())
 
 corpus_tfidf = []
 for i, doc in enumerate(full_corpus):
-    doc_tfidf_scores = tfidf_matrix[i].toarray().flatten()
+    doc_tfidf_scores = tfidf_matrix[i].toarray().flatten() # type: ignore
     word_scores = list(zip(feature_names, doc_tfidf_scores))
 
     sorted_words = [word for word, score in sorted(word_scores, key=lambda x: x[1], reverse=True)]
@@ -52,3 +54,12 @@ for i, doc in enumerate(full_corpus):
         doc_tfidf_aux = doc_tfidf.split()
     
     corpus_tfidf.append(doc_tfidf)
+
+save_path = "/mnt/research/aguiarlab/proj/law/data/PaperData/textData/tfidf"
+os.makedirs(save_path, exist_ok=True)
+indexed_corpus_tfidf = {}
+for doc, document_id in zip(corpus_tfidf, full_corpus_document_no):
+    indexed_corpus_tfidf[document_id] = doc
+
+with open(os.path.join(save_path, "indexed_text.pkl"), "wb") as file:
+    pickle.dump(indexed_corpus_tfidf, file)
