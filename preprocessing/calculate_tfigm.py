@@ -8,83 +8,37 @@ import pickle
 from scipy import sparse
 
 class TFIGMVectorizer(BaseEstimator, TransformerMixin):
-    def __init__(self, min_df=1, max_df=1.0):
+    def __init__(self, min_df=1):
         self.min_df = min_df
-        self.max_df = max_df
-        self.count_vectorizer = CountVectorizer(min_df=min_df, max_df=max_df)
-        
-    def fit(self, raw_documents):
-        # Get term frequencies
-        self.tf_matrix = self.count_vectorizer.fit_transform(raw_documents)
-        self.feature_names = self.count_vectorizer.get_feature_names_out()
-        
-        # Calculate document lengths (total terms in each document)
-        self.doc_lengths = np.array(self.tf_matrix.sum(axis=1)).flatten()
-        
-        # Calculate max frequency for each term
-        self.max_term_freqs = np.array(self.tf_matrix.max(axis=0)).flatten()
-        
-        # Calculate IGM values
-        self.igm_values = self._calculate_igm()
-        
+
+    def fit(self, documents, y=None):
+        # Fit the count vectorizer to calculate term frequencies
+        self.vectorizer = CountVectorizer(min_df=self.min_df)
+        self.X_counts = self.vectorizer.fit_transform(documents)
         return self
-    
-    def _calculate_igm(self):
-        n_terms = len(self.feature_names)
-        igm_values = np.zeros((self.tf_matrix.shape[0], n_terms))
+
+    def transform(self, documents):
+        # Compute the term frequency (TF) matrix
+        X_counts = self.vectorizer.transform(documents)
+        term_frequencies = X_counts.toarray()
+
+        # Calculate the maximum frequency for each term across all documents
+        max_frequencies = np.max(term_frequencies, axis=0)
+
+        # Calculate the Inverse Gravity Moment (IGM) for each term
+        inverse_gravity_moments = []
         
-        # Convert sparse matrix to dense for easier calculations
-        tf_array = self.tf_matrix.toarray()
-        
-        for term_idx in range(n_terms):
-            # Get max frequency for this term
-            max_freq = self.max_term_freqs[term_idx]
-            
-            if max_freq > 0:
-                # Calculate distance function for each document
-                distances = tf_array[:, term_idx] / max_freq
-                
-                # Calculate sum of 1/distance for documents where term appears
-                mask = distances > 0
-                if np.any(mask):
-                    igm_sum = np.sum(1 / distances[mask])
-                    
-                    # Calculate normalized term frequency
-                    norm_tf = tf_array[:, term_idx] / self.doc_lengths
-                    
-                    # Final TF-IGM calculation
-                    igm_values[:, term_idx] = norm_tf * igm_sum
-        
-        return igm_values
-    
-    def transform(self, raw_documents):
-        # Get term frequencies for new documents
-        tf_matrix = self.count_vectorizer.transform(raw_documents)
-        doc_lengths = np.array(tf_matrix.sum(axis=1)).flatten()
-        
-        n_docs, n_terms = tf_matrix.shape
-        tfigm_matrix = np.zeros((n_docs, n_terms))
-        tf_array = tf_matrix.toarray()
-        
-        for term_idx in range(n_terms):
-            max_freq = self.max_term_freqs[term_idx]
-            
-            if max_freq > 0:
-                distances = tf_array[:, term_idx] / max_freq
-                mask = distances > 0
-                if np.any(mask):
-                    igm_sum = np.sum(1 / distances[mask])
-                    norm_tf = tf_array[:, term_idx] / doc_lengths
-                    tfigm_matrix[:, term_idx] = norm_tf * igm_sum
-        
-        return sparse.csr_matrix(tfigm_matrix)
-    
-    def fit_transform(self, raw_documents):
-        self.fit(raw_documents)
-        return sparse.csr_matrix(self.igm_values)
-    
-    def get_feature_names_out(self):
-        return self.feature_names
+        for t_idx in range(term_frequencies.shape[1]):
+            # For each term, calculate the sum of 1/dist(t,d)
+            dist = term_frequencies[:, t_idx] / max_frequencies[t_idx]
+            igm = np.sum(np.where(dist != 0, 1 / dist, 0))  # Avoid division by zero
+            inverse_gravity_moments.append(igm)
+
+        inverse_gravity_moments = np.array(inverse_gravity_moments)
+
+        # Compute TF-IGM: multiply TF by IGM
+        tf_igm_matrix = term_frequencies * inverse_gravity_moments
+        return tf_igm_matrix
 
 # Load and prepare data
 train_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_train.csv")
@@ -95,9 +49,7 @@ test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_
 test_corpus = test_data[["filepath", "document_no"]]
 
 corpus = pd.concat([train_corpus, val_corpus, test_corpus], ignore_index=True)
-corpus["document_no"] = corpus["filepath"].str.extract(r'(\d+)(?=\D*$)')
 corpus = corpus.dropna()
-corpus["document_no"] = corpus["document_no"].astype(int)
 
 full_corpus = []
 full_corpus_document_no = []
@@ -114,7 +66,7 @@ for _, row in corpus.iterrows():
 # Use TF-IGM instead of TF-IDF
 tfigm_vectorizer = TFIGMVectorizer()
 tfigm_matrix = tfigm_vectorizer.fit_transform(full_corpus)
-feature_names = np.array(tfigm_vectorizer.get_feature_names_out())
+feature_names = np.array(tfigm_vectorizer.vectorizer.get_feature_names_out())
 
 corpus_tfigm = []
 for i, doc in enumerate(full_corpus):
