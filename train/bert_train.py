@@ -27,15 +27,15 @@ class LegalDocDataset(torch.utils.data.Dataset):
 
 train_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_train.csv")
 train_data = train_data[["filepath", "document_no", "MotionResultCode"]]
-train_data["labels"] = train_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
+train_data["label"] = train_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
 val_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_val.csv")
 val_data = val_data[["filepath", "document_no", "MotionResultCode"]]
-val_data["labels"] = val_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
+val_data["label"] = val_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
 test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_test.csv")
 test_data = test_data[["filepath", "document_no", "MotionResultCode"]]
-test_data["labels"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
+test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
 full_corpus = pickle.load(open(os.path.join("/mnt/research/aguiarlab/proj/law/data/PaperData/textData/tfidf", "indexed_text.pkl"), "rb"))
 
