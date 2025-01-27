@@ -27,6 +27,7 @@ feature_names = np.array(tfidf_vectorizer.get_feature_names_out())
 
 corpus_tfidf = []
 for i, doc in enumerate(full_corpus):
+    print(f"PROGRESS {i}/{len(full_corpus)}")
     doc_tfidf_scores = tfidf_matrix[i].toarray().flatten() # type: ignore
     word_scores = list(zip(feature_names, doc_tfidf_scores))
 
