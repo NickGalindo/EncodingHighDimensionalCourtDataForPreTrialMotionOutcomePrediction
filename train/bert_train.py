@@ -43,6 +43,8 @@ train_data["text"] = train_data["document_no"].map(full_corpus)
 val_data["text"] = val_data["document_no"].map(full_corpus)
 test_data["text"] = test_data["document_no"].map(full_corpus)
 
+print(train_data["text"])
+
 train_data = train_data[["text", "label"]]
 val_data = val_data[["text", "label"]]
 test_data = test_data[["text", "label"]]
