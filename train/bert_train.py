@@ -47,6 +47,10 @@ train_data = train_data[["text", "label"]].dropna()
 val_data = val_data[["text", "label"]].dropna()
 test_data = test_data[["text", "label"]].dropna()
 
+print(f"TRAIN DATASET SIZE: {len(train_data)}")
+print(f"VAL DATASET SIZE: {len(val_data)}")
+print(f"TEST DATASET SIZE: {len(test_data)}")
+
 train_dataset = Dataset.from_pandas(train_data)
 val_dataset = Dataset.from_pandas(val_data)
 test_dataset = Dataset.from_pandas(test_data)
