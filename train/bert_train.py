@@ -1,3 +1,5 @@
+import torch
+import intel_extension_for_pytorch as ipex
 from transformers import BertTokenizer
 from transformers import BertForSequenceClassification, Trainer, TrainingArguments
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
@@ -11,7 +13,7 @@ import evaluate
 import pandas as pd
 import numpy as np
 
-
+os.environ["WANDB_PROJECT"] = 'LegalTextEncoding'
 class LegalDocDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels):
         self.encodings = encodings
@@ -61,8 +63,8 @@ test_dataset = Dataset.from_pandas(test_data)
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", num_labels=2)
 model = BertForSequenceClassification.from_pretrained("bert-base-uncased")
 
-model.cuda()
-torch.cuda.empty_cache()
+#model.cuda()
+#torch.cuda.empty_cache()
 print("INITIATED CUDA")
 
 def tokenizeFunction(some_dataset):
@@ -101,7 +103,10 @@ training_args = TrainingArguments(
     logging_steps=10,                # log every 10 steps
     save_steps=10,                   # save checkpoint every 10 steps
     load_best_model_at_end=True,     # load the best model when finished training (based on validation)
-    fp16=True
+    fp16=True,
+    use_ipex=True,
++   use_cpu=True,
+    report_to='wandb'
 )
 
 trainer = Trainer(
