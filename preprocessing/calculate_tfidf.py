@@ -59,6 +59,7 @@ for i, doc in enumerate(full_corpus):
     while len(doc_tfidf_aux) > 512:
         doc_tfidf = ""
         sorted_words_set.remove(sorted_words[sorted_words_pos])
+        sorted_words_pos -= 1
 
         for word in doc_tfidf_aux:
             if word in sorted_words_set:
