@@ -18,60 +18,83 @@ class TFIGMVectorizer(BaseEstimator, TransformerMixin):
         self.tf_matrix = self.count_vectorizer.fit_transform(raw_documents)
         self.feature_names = self.count_vectorizer.get_feature_names_out()
         
-        # Calculate IGM for each term
+        # Calculate document lengths (total terms in each document)
+        self.doc_lengths = np.array(self.tf_matrix.sum(axis=1)).flatten()
+        
+        # Calculate max frequency for each term
+        self.max_term_freqs = np.array(self.tf_matrix.max(axis=0)).flatten()
+        
+        # Calculate IGM values
         self.igm_values = self._calculate_igm()
         
         return self
     
     def _calculate_igm(self):
-        n_docs = self.tf_matrix.shape[0]
-        igm_values = np.zeros(len(self.feature_names))
+        n_terms = len(self.feature_names)
+        igm_values = np.zeros((self.tf_matrix.shape[0], n_terms))
         
-        for term_idx in range(len(self.feature_names)):
-            # Get term frequencies for each document
-            term_freqs = self.tf_matrix.getcol(term_idx).toarray().flatten()
+        # Convert sparse matrix to dense for easier calculations
+        tf_array = self.tf_matrix.toarray()
+        
+        for term_idx in range(n_terms):
+            # Get max frequency for this term
+            max_freq = self.max_term_freqs[term_idx]
             
-            # Find documents where term appears
-            doc_positions = np.where(term_freqs > 0)[0]
-            
-            if len(doc_positions) > 0:
-                # Get max frequency for this term across all documents
-                max_freq = np.max(term_freqs)
+            if max_freq > 0:
+                # Calculate distance function for each document
+                distances = tf_array[:, term_idx] / max_freq
                 
-                if max_freq > 0:
-                    # Calculate relative frequencies (f(t,d)/max_f(t,d))
-                    relative_freqs = term_freqs[doc_positions] / max_freq
+                # Calculate sum of 1/distance for documents where term appears
+                mask = distances > 0
+                if np.any(mask):
+                    igm_sum = np.sum(1 / distances[mask])
                     
-                    # Calculate distances between consecutive appearances using relative frequencies
-                    distances = np.diff(relative_freqs)
+                    # Calculate normalized term frequency
+                    norm_tf = tf_array[:, term_idx] / self.doc_lengths
                     
-                    if len(distances) > 0:
-                        # Calculate gravity moment using the relative frequency differences
-                        gravity_moment = np.sum(1 / (distances ** 2))
-                        igm_values[term_idx] = np.log(1 + (n_docs / gravity_moment))
-                    else:
-                        # If term appears in only one document
-                        igm_values[term_idx] = np.log(1 + n_docs)
-            
+                    # Final TF-IGM calculation
+                    igm_values[:, term_idx] = norm_tf * igm_sum
+        
         return igm_values
     
     def transform(self, raw_documents):
         # Get term frequencies for new documents
         tf_matrix = self.count_vectorizer.transform(raw_documents)
+        doc_lengths = np.array(tf_matrix.sum(axis=1)).flatten()
         
-        # Multiply TF by IGM values
-        tf_igm_matrix = tf_matrix.multiply(sparse.csr_matrix(self.igm_values))
+        n_docs, n_terms = tf_matrix.shape
+        tfigm_matrix = np.zeros((n_docs, n_terms))
+        tf_array = tf_matrix.toarray()
         
-        return tf_igm_matrix
+        for term_idx in range(n_terms):
+            max_freq = self.max_term_freqs[term_idx]
+            
+            if max_freq > 0:
+                distances = tf_array[:, term_idx] / max_freq
+                mask = distances > 0
+                if np.any(mask):
+                    igm_sum = np.sum(1 / distances[mask])
+                    norm_tf = tf_array[:, term_idx] / doc_lengths
+                    tfigm_matrix[:, term_idx] = norm_tf * igm_sum
+        
+        return sparse.csr_matrix(tfigm_matrix)
     
     def fit_transform(self, raw_documents):
-        return self.fit(raw_documents).transform(raw_documents)
+        self.fit(raw_documents)
+        return sparse.csr_matrix(self.igm_values)
     
     def get_feature_names_out(self):
         return self.feature_names
 
-# Modified main code
-corpus = pd.read_csv("/mnt/research/aguiarlab/proj/law/pdfs/all_txt_files_abs_path.txt", names=["filepath"], header=None)
+# Load and prepare data
+train_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_train.csv")
+train_corpus = train_data[["filepath", "document_no"]]
+val_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_val.csv")
+val_corpus = val_data[["filepath", "document_no"]]
+test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_test.csv")
+test_corpus = test_data[["filepath", "document_no"]]
+
+corpus = pd.concat([train_corpus, val_corpus, test_corpus], ignore_index=True)
 corpus["document_no"] = corpus["filepath"].str.extract(r'(\d+)(?=\D*$)')
 corpus = corpus.dropna()
 corpus["document_no"] = corpus["document_no"].astype(int)
@@ -112,6 +135,7 @@ for i, doc in enumerate(full_corpus):
     while len(doc_tfigm_aux) > 512:
         doc_tfigm = ""
         sorted_words_set.remove(sorted_words[sorted_words_pos])
+        sorted_words_pos -= 1
         for word in doc_tfigm_aux:
             if word in sorted_words_set:
                 doc_tfigm += word + " "
