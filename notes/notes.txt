@@ -1,1 +1,1 @@
-tfidf -> removing special characters except numbers. Strings with numbers contiguos will also not be considered.
+tfidf -> removing special characters except numbers. Strings with numbers contiguos will also not be considered. Individual character strings are also removed as they are not informative or could 

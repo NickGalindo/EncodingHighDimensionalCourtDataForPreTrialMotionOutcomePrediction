@@ -5,8 +5,17 @@ import re
 import os
 import pickle
 
+train_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_train.csv")
+train_corpus = train_data[["filepath", "document_no"]]
 
-corpus = pd.read_csv("/mnt/research/aguiarlab/proj/law/pdfs/all_txt_files_abs_path.txt", names=["filepath"], header=None)
+val_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_val.csv")
+val_corpus = val_data[["filepath", "document_no"]]
+
+test_data = pd.read_csv("/mnt/research/aguiarlab/proj/law/data/PaperData/mapped_full_test.csv")
+test_corpus = test_data[["filepath", "document_no"]]
+
+
+corpus = pd.concat([train_corpus, val_corpus, test_corpus], ignore_index=True)
 corpus["document_no"] = corpus["filepath"].str.extract(r'(\d+)(?=\D*$)')
 corpus = corpus.dropna()
 corpus["document_no"] = corpus["document_no"].astype(int)
