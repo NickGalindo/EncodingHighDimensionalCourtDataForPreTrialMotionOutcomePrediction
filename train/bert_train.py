@@ -72,11 +72,20 @@ train_tokenized = train_dataset.map(tokenizeFunction, batched=True)
 val_tokenized = val_dataset.map(tokenizeFunction, batched=True)
 test_tokenized = test_dataset.map(tokenizeFunction, batched=True)
 
+train_tokenized = train_tokenized.filter(lambda x: x["input_ids"] is not None and len(x["input_ids"]) > 0)
+val_tokenized = val_tokenized.filter(lambda x: x["input_ids"] is not None and len(x["input_ids"]) > 0)
+test_tokenized = test_tokenized.filter(lambda x: x["input_ids"] is not None and len(x["input_ids"]) > 0)
+
+
+print(f"FILTERED TRAIN DATASET SIZE: {len(train_data)}")
+print(f"FILTERED VAL DATASET SIZE: {len(val_data)}")
+print(f"FILTERED TEST DATASET SIZE: {len(test_data)}")
+
 accuracy = evaluate.load("accuracy")
 def computeMetrics(eval_pred):
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)
-    return accuracy.compute(predicitions=predictions, references=labels)
+    return accuracy.compute(predictions=predictions, references=labels)
 
 
 training_args = TrainingArguments(
@@ -84,8 +93,8 @@ training_args = TrainingArguments(
     eval_strategy="epoch",     # evaluate after each epoch
     save_strategy="epoch",
     learning_rate=5e-5,              # learning rate
-    per_device_train_batch_size=8,   # batch size for training
-    per_device_eval_batch_size=8,    # batch size for evaluation
+    per_device_train_batch_size=48,   # batch size for training
+    per_device_eval_batch_size=48,    # batch size for evaluation
     num_train_epochs=3,              # number of training epochs
     weight_decay=0.01,               # strength of weight decay
     logging_dir=os.path.join(base_dir, "bertTraining/logs"),            # directory for storing logs
