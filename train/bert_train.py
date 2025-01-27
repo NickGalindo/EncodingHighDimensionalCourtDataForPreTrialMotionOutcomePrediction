@@ -13,7 +13,7 @@ import evaluate
 import pandas as pd
 import numpy as np
 
-
+os.environ["WANDB_PROJECT"] = 'LegalTextEncoding'
 class LegalDocDataset(torch.utils.data.Dataset):
     def __init__(self, encodings, labels):
         self.encodings = encodings
@@ -97,6 +97,7 @@ training_args = TrainingArguments(
     fp16=True,
     use_ipex=True,
 +   use_cpu=True,
+    report_to='wandb'
 )
 
 trainer = Trainer(
