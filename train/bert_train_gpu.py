@@ -61,7 +61,7 @@ val_dataset = Dataset.from_pandas(val_data)
 test_dataset = Dataset.from_pandas(test_data)
 
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", num_labels=2)
-model = BertForSequenceClassification.from_pretrained("bert-base-uncased", hidden_dropout_prob=0.2, attention_probs_dropout_prob=0.2)
+model = BertForSequenceClassification.from_pretrained("bert-base-uncased", hidden_dropout_prob=0.1, attention_probs_dropout_prob=0.1)
 
 model.cuda()
 torch.cuda.empty_cache()
@@ -95,8 +95,8 @@ training_args = TrainingArguments(
     eval_strategy="epoch",     # evaluate after each epoch
     save_strategy="epoch",
     learning_rate=5e-5,              # learning rate
-    per_device_train_batch_size=16,   # batch size for training
-    per_device_eval_batch_size=16,    # batch size for evaluation
+    per_device_train_batch_size=32,   # batch size for training
+    per_device_eval_batch_size=32,    # batch size for evaluation
     num_train_epochs=50,              # number of training epochs
     weight_decay=0.01,               # strength of weight decay
     logging_dir=os.path.join(base_dir, "bertTraining/logs"),            # directory for storing logs

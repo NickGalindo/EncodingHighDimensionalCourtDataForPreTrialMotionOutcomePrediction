@@ -42,7 +42,7 @@ test_data = pd.read_csv(os.path.join(base_dir, "mapped_full_test.csv"))
 test_data = test_data[["filepath", "document_no", "MotionResultCode"]]
 test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
-full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/tfidf"), "indexed_text.pkl"), "rb"))
+full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/alltext"), "indexed_text.pkl"), "rb"))
 
 train_data["text"] = train_data["document_no"].map(full_corpus)
 val_data["text"] = val_data["document_no"].map(full_corpus)
@@ -61,7 +61,7 @@ val_dataset = Dataset.from_pandas(val_data)
 test_dataset = Dataset.from_pandas(test_data)
 
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", num_labels=2)
-model = BertForSequenceClassification.from_pretrained("bert-base-uncased", hidden_dropout_prob=0.2, attention_probs_dropout_prob=0.2)
+model = BertForSequenceClassification.from_pretrained("bert-base-uncased", hidden_dropout_prob=0.1, attention_probs_dropout_prob=0.1)
 
 #model.cuda()
 #torch.cuda.empty_cache()
@@ -95,8 +95,8 @@ training_args = TrainingArguments(
     eval_strategy="epoch",     # evaluate after each epoch
     save_strategy="epoch",
     learning_rate=5e-5,              # learning rate
-    per_device_train_batch_size=16,   # batch size for training
-    per_device_eval_batch_size=16,    # batch size for evaluation
+    per_device_train_batch_size=32,   # batch size for training
+    per_device_eval_batch_size=32,    # batch size for evaluation
     num_train_epochs=50,              # number of training epochs
     weight_decay=0.01,               # strength of weight decay
     logging_dir=os.path.join(base_dir, "bertTraining/logs"),            # directory for storing logs
@@ -132,8 +132,8 @@ accuracy = accuracy_score(labels, pred_classes)
 
 print(f"ACCURACY ON TEST: {accuracy}")
 
-model_path = os.path.join(base_dir, "bertTraining/models/tfidf/extra/model")
-tok_path = os.path.join(base_dir, "bertTraining/models/tfidf/extra/tokenizer")
+model_path = os.path.join(base_dir, "bertTraining/models/alltext/extra/model")
+tok_path = os.path.join(base_dir, "bertTraining/models/alltext/extra/tokenizer")
 os.makedirs(model_path, exist_ok=True)
 os.makedirs(tok_path, exist_ok=True)
 model.save_pretrained(model_path);
