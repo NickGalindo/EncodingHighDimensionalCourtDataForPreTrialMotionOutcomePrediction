@@ -44,13 +44,19 @@ test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR
 
 full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/alltext"), "indexed_text.pkl"), "rb"))
 
+print(train_data)
+
 train_data["text"] = train_data["document_no"].map(full_corpus)
 val_data["text"] = val_data["document_no"].map(full_corpus)
 test_data["text"] = test_data["document_no"].map(full_corpus)
 
+print(train_data)
+
 train_data = train_data[["text", "label"]].dropna()
 val_data = val_data[["text", "label"]].dropna()
 test_data = test_data[["text", "label"]].dropna()
+
+print(train_data)
 
 print(f"TRAIN DATASET SIZE: {len(train_data)}")
 print(f"VAL DATASET SIZE: {len(val_data)}")
