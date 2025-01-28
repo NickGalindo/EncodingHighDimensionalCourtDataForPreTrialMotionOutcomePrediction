@@ -64,6 +64,7 @@ print(f"FILTERED VAL DATASET SIZE: {len(val_data)}")
 print(f"FILTERED TEST DATASET SIZE: {len(test_data)}")
 
 def extractCLSEmbeddings(input):
+    input = {key: value.cuda() for key, value in input.items()}
     with torch.no_grad():
         embedding = model(**input).last_hidden_state[:,0,:]
     return embedding
