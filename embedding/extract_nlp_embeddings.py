@@ -81,9 +81,9 @@ def batchEmbeddingExtraction(input, batch_size):
 
     return all_embedding
 
-train_embedding = extractCLSEmbeddings(train_tokenized)
-val_embedding = extractCLSEmbeddings(val_tokenized)
-test_embedding = extractCLSEmbeddings(test_tokenized)
+train_embedding = batchEmbeddingExtraction(train_tokenized, 64)
+val_embedding = batchEmbeddingExtraction(val_tokenized, 64)
+test_embedding = batchEmbeddingExtraction(test_tokenized, 64)
 
 def relateEmbeddingToMotionID(data_embedding, data):
     related_dict = {}
