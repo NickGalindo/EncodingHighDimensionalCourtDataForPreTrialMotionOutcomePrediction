@@ -60,8 +60,8 @@ train_dataset = Dataset.from_pandas(train_data)
 val_dataset = Dataset.from_pandas(val_data)
 test_dataset = Dataset.from_pandas(test_data)
 
-tokenizer = BertTokenizer.from_pretrained("nlpaueb/legal-bert-base-uncased", num_labels=2)
-model = BertForSequenceClassification.from_pretrained("nlpaueb/legal-bert-base-uncased", hidden_dropout_prob=0.1, attention_probs_dropout_prob=0.1)
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", num_labels=2)
+model = BertForSequenceClassification.from_pretrained("bert-base-uncased", hidden_dropout_prob=0.1, attention_probs_dropout_prob=0.1)
 
 model.cuda()
 torch.cuda.empty_cache()
@@ -133,8 +133,8 @@ accuracy = accuracy_score(labels, pred_classes)
 
 print(f"ACCURACY ON TEST: {accuracy}")
 
-model_path = os.path.join(base_dir, "bertTraining/models/alltext/legal_extra/model")
-tok_path = os.path.join(base_dir, "bertTraining/models/alltext/legal_extra/tokenizer")
+model_path = os.path.join(base_dir, "bertTraining/models/alltext/extra/model")
+tok_path = os.path.join(base_dir, "bertTraining/models/alltext/extra/tokenizer")
 os.makedirs(model_path, exist_ok=True)
 os.makedirs(tok_path, exist_ok=True)
 model.save_pretrained(model_path);
