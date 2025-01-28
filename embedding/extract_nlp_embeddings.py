@@ -53,10 +53,11 @@ model.cuda()
 torch.cuda.empty_cache()
 print("INITIATED CUDA")
 
+print(train_data)
 
-train_tokenized = tokenizer(train_data["text"], padding="max_length", truncation=True, max_length=512, return_tensors="pt")
-val_tokenized = tokenizer(val_data["text"], padding="max_length", truncation=True, max_length=512, return_tensors="pt")
-test_tokenized = tokenizer(test_data["text"], padding="max_length", truncation=True, max_length=512, return_tensors="pt")
+train_tokenized = tokenizer(train_data["text"].tolist(), padding="max_length", truncation=True, max_length=512, return_tensors="pt")
+val_tokenized = tokenizer(val_data["text"].tolist(), padding="max_length", truncation=True, max_length=512, return_tensors="pt")
+test_tokenized = tokenizer(test_data["text"].tolist(), padding="max_length", truncation=True, max_length=512, return_tensors="pt")
 
 print(f"FILTERED TRAIN DATASET SIZE: {len(train_data)}")
 print(f"FILTERED VAL DATASET SIZE: {len(val_data)}")
