@@ -40,14 +40,14 @@ train_data["text"] = train_data["document_no"].map(full_corpus)
 val_data["text"] = val_data["document_no"].map(full_corpus)
 test_data["text"] = test_data["document_no"].map(full_corpus)
 
-train_data = train_data[["text", "label", "MotionID"]].dropna().drop_index()
-val_data = val_data[["text", "label", "MotionID"]].dropna().drop_index()
-test_data = test_data[["text", "label", "MotionID"]].dropna().drop_index()
+train_data = train_data[["text", "label", "MotionID"]].dropna().reset_index()
+val_data = val_data[["text", "label", "MotionID"]].dropna().reset_index()
+test_data = test_data[["text", "label", "MotionID"]].dropna().reset_index()
 
 
 model_path = "/home/coder/second/PaperData/bertTraining/models/alltext/extra"
-tokenizer = BertTokenizer.from_pretrained(os.path.join(model_path, "model"), num_labels=2)
-model = BertForSequenceClassification.from_pretrained(os.path.join(model_path, "tokenizer"), hidden_dropout_prob=0.1, attention_probs_dropout_prob=0.1)
+tokenizer = BertTokenizer.from_pretrained(os.path.join(model_path, "model"))
+model = BertForSequenceClassification.from_pretrained(os.path.join(model_path, "tokenizer")).bert
 
 model.cuda()
 torch.cuda.empty_cache()
