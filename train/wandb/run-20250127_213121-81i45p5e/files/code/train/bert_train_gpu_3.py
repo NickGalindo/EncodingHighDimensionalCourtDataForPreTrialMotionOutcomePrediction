@@ -27,7 +27,9 @@ class LegalDocDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.labels)
 
-base_dir = "/home/coder/base/PaperData"
+#base_dir = "/home/coder/base/PaperData"
+#base_dir = "/content/PaperData"
+base_dir = "/home/vyral/tmp/PaperData"
 #base_dir = "/mnt/research/aguiarlab/proj/law/data/PaperData/"
 
 train_data = pd.read_csv(os.path.join(base_dir, "mapped_full_train.csv"))
@@ -42,7 +44,7 @@ test_data = pd.read_csv(os.path.join(base_dir, "mapped_full_test.csv"))
 test_data = test_data[["filepath", "document_no", "MotionResultCode"]]
 test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
-full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/tfigm"), "indexed_text.pkl"), "rb"))
+full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/alltext"), "indexed_text.pkl"), "rb"))
 
 train_data["text"] = train_data["document_no"].map(full_corpus)
 val_data["text"] = val_data["document_no"].map(full_corpus)
@@ -132,8 +134,8 @@ accuracy = accuracy_score(labels, pred_classes)
 
 print(f"ACCURACY ON TEST: {accuracy}")
 
-model_path = os.path.join(base_dir, "bertTraining/models/tfigm/legal_extra/model")
-tok_path = os.path.join(base_dir, "bertTraining/models/tfigm/legal_extra/tokenizer")
+model_path = os.path.join(base_dir, "bertTraining/models/alltext/extra/model")
+tok_path = os.path.join(base_dir, "bertTraining/models/alltext/extra/tokenizer")
 os.makedirs(model_path, exist_ok=True)
 os.makedirs(tok_path, exist_ok=True)
 model.save_pretrained(model_path);

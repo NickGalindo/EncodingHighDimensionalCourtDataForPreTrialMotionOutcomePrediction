@@ -1,0 +1,42 @@
+{
+  "os": "Linux-6.8.0-49-generic-x86_64-with-glibc2.35",
+  "python": "CPython 3.12.7",
+  "startedAt": "2025-01-28T02:31:21.756935Z",
+  "program": "/home/vyral/Documents/UCONN/CivilFull/train/bert_train_gpu_3.py",
+  "codePath": "train/bert_train_gpu_3.py",
+  "git": {
+    "remote": "git@github.com:NickGalindo/EncodingHighDimensionalCourtDataForPreTrialMotionOutcomePrediction.git",
+    "commit": "98550bcb360ee41a1c907487f598a8d4da75efe5"
+  },
+  "email": "ngalindoc@unal.edu.co",
+  "root": "/home/vyral/Documents/UCONN/CivilFull/train",
+  "host": "vyral-XPS-17-9710",
+  "executable": "/home/vyral/Documents/UCONN/CivilFull/env/bin/python",
+  "codePathLocal": "bert_train_gpu_3.py",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "343523803136",
+      "used": "242681425920"
+    }
+  },
+  "memory": {
+    "total": "33368834048"
+  },
+  "cpu": {
+    "count": 8,
+    "countLogical": 16
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 3060 Laptop GPU",
+      "memoryTotal": "6442450944",
+      "cudaCores": 3840,
+      "architecture": "Ampere"
+    }
+  ],
+  "cudaVersion": "12.4"
+}
