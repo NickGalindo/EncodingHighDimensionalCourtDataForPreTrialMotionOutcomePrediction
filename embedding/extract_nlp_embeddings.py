@@ -33,7 +33,7 @@ test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR
 
 
 
-full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/tfidf"), "indexed_text.pkl"), "rb"))
+full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/tfigm"), "indexed_text.pkl"), "rb"))
 
 
 
@@ -46,7 +46,7 @@ val_data = val_data[["text", "label", "MotionID"]].dropna().reset_index()
 test_data = test_data[["text", "label", "MotionID"]].dropna().reset_index()
 
 
-model_path = "/home/coder/second/PaperData/bertTraining/models/tfidf/extra"
+model_path = "/home/coder/second/PaperData/bertTraining/models/tfigm/extra_2"
 #model_path = "/home/vyral/Documents/UCONN/fullData/PaperData3/PaperData/bertTraining/models/alltext/extra"
 tokenizer = BertTokenizer.from_pretrained(os.path.join(model_path, "tokenizer"))
 model = BertForSequenceClassification.from_pretrained(os.path.join(model_path, "model")).bert
@@ -98,7 +98,7 @@ train_embedding_dict = relateEmbeddingToMotionID(train_embedding, train_data)
 val_embedding_dict = relateEmbeddingToMotionID(val_embedding, val_data)
 test_embedding_dict = relateEmbeddingToMotionID(test_embedding, test_data)
 
-save_path = "/home/coder/second/PaperData/nlp_embeddings/bert_tfidf"
+save_path = "/home/coder/second/PaperData/nlp_embeddings/bert_tfigm"
 #save_path = "/home/vyral/Documents/UCONN/fullData/PaperData3/PaperData/nlp_embeddings/bert_truncation"
 os.makedirs(save_path, exist_ok=True)
 torch.save(train_embedding_dict, os.path.join(save_path, "train_embedding.pth"))
