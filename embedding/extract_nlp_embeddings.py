@@ -16,6 +16,7 @@ import numpy as np
 os.environ["WANDB_PROJECT"] = 'LegalTextEncoding'
 
 base_dir = "/home/coder/second/PaperData"
+#base_dir = "/home/vyral/Documents/UCONN/fullData/PaperData3/PaperData"
 #base_dir = "/mnt/research/aguiarlab/proj/law/data/PaperData/"
 
 train_data = pd.read_csv(os.path.join(base_dir, "mapped_full_train.csv"))
@@ -32,7 +33,7 @@ test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR
 
 
 
-full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/tfidf"), "indexed_text.pkl"), "rb"))
+full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/alltext"), "indexed_text.pkl"), "rb"))
 
 
 
@@ -45,7 +46,8 @@ val_data = val_data[["text", "label", "MotionID"]].dropna().reset_index()
 test_data = test_data[["text", "label", "MotionID"]].dropna().reset_index()
 
 
-model_path = "/home/coder/second/PaperData/bertTraining/models/tfidf/extra"
+model_path = "/home/coder/second/PaperData/bertTraining/models/alltext/extra"
+#model_path = "/home/vyral/Documents/UCONN/fullData/PaperData3/PaperData/bertTraining/models/alltext/extra"
 tokenizer = BertTokenizer.from_pretrained(os.path.join(model_path, "tokenizer"))
 model = BertForSequenceClassification.from_pretrained(os.path.join(model_path, "model")).bert
 
@@ -81,9 +83,9 @@ def batchEmbeddingExtraction(input, batch_size):
 
     return all_embedding
 
-train_embedding = batchEmbeddingExtraction(train_tokenized, 64)
-val_embedding = batchEmbeddingExtraction(val_tokenized, 64)
-test_embedding = batchEmbeddingExtraction(test_tokenized, 64)
+train_embedding = batchEmbeddingExtraction(train_tokenized, 16)
+val_embedding = batchEmbeddingExtraction(val_tokenized, 16)
+test_embedding = batchEmbeddingExtraction(test_tokenized, 16)
 
 def relateEmbeddingToMotionID(data_embedding, data):
     related_dict = {}
@@ -96,11 +98,9 @@ train_embedding_dict = relateEmbeddingToMotionID(train_embedding, train_data)
 val_embedding_dict = relateEmbeddingToMotionID(val_embedding, val_data)
 test_embedding_dict = relateEmbeddingToMotionID(test_embedding, test_data)
 
-save_path = "/home/coder/second/PaperData/nlp_embeddings/bert_tfidf"
+save_path = "/home/coder/second/PaperData/nlp_embeddings/bert_truncation"
+#save_path = "/home/vyral/Documents/UCONN/fullData/PaperData3/PaperData/nlp_embeddings/bert_truncation"
 os.makedirs(save_path, exist_ok=True)
-with open(os.path.join(save_path, "train_embedding.pkl"), "wb") as file:
-    pickle.dump(train_embedding_dict, file)
-with open(os.path.join(save_path, "val_embedding.pkl"), "wb") as file:
-    pickle.dump(val_embedding_dict, file)
-with open(os.path.join(save_path, "test_embedding.pkl"), "wb") as file:
-    pickle.dump(test_embedding_dict, file)
+torch.save(train_embedding_dict, os.path.join(save_path, "train_embedding.pth"))
+torch.save(val_embedding_dict, os.path.join(save_path, "val_embedding.pth"))
+torch.save(test_embedding_dict, os.path.join(save_path, "test_embedding.pth"))
