@@ -46,8 +46,8 @@ test_data = test_data[["text", "label", "MotionID"]].dropna().reset_index()
 
 
 model_path = "/home/coder/second/PaperData/bertTraining/models/alltext/extra"
-tokenizer = BertTokenizer.from_pretrained(os.path.join(model_path, "model"))
-model = BertForSequenceClassification.from_pretrained(os.path.join(model_path, "tokenizer")).bert
+tokenizer = BertTokenizer.from_pretrained(os.path.join(model_path, "tokenizer"))
+model = BertForSequenceClassification.from_pretrained(os.path.join(model_path, "model")).bert
 
 model.cuda()
 torch.cuda.empty_cache()
