@@ -64,10 +64,22 @@ print(f"FILTERED VAL DATASET SIZE: {len(val_data)}")
 print(f"FILTERED TEST DATASET SIZE: {len(test_data)}")
 
 def extractCLSEmbeddings(input):
-    input = {key: value.cuda() for key, value in input.items()}
     with torch.no_grad():
         embedding = model(**input).last_hidden_state[:,0,:]
     return embedding
+
+def batchEmbeddingExtraction(input, batch_size):
+    all_embedding = []
+    num_sequences = input["input_ids"].size(0)
+    for i in range(0, num_sequences, batch_size):
+        batch_input = {key: value[i:i + batch_size].cuda() for key, value in input.items()}
+        embedding = extractCLSEmbeddings(batch_input)
+        embedding = embedding.cpu()
+        all_embedding.append(embedding)
+
+    all_embedding = torch.cat(all_embedding, dim=0)
+
+    return all_embedding
 
 train_embedding = extractCLSEmbeddings(train_tokenized)
 val_embedding = extractCLSEmbeddings(val_tokenized)
