@@ -61,7 +61,7 @@ val_dataset = Dataset.from_pandas(val_data)
 test_dataset = Dataset.from_pandas(test_data)
 
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased", num_labels=2)
-model = BertForSequenceClassification.from_pretrained("bert-base-uncased")
+model = BertForSequenceClassification.from_pretrained("bert-base-uncased", hidden_dropout_prob=0.2, attention_probs_dropout_prob=0.2)
 
 model.cuda()
 torch.cuda.empty_cache()
@@ -95,14 +95,17 @@ training_args = TrainingArguments(
     eval_strategy="epoch",     # evaluate after each epoch
     save_strategy="epoch",
     learning_rate=5e-5,              # learning rate
-    per_device_train_batch_size=48,   # batch size for training
-    per_device_eval_batch_size=48,    # batch size for evaluation
-    num_train_epochs=3,              # number of training epochs
+    per_device_train_batch_size=16,   # batch size for training
+    per_device_eval_batch_size=16,    # batch size for evaluation
+    num_train_epochs=50,              # number of training epochs
     weight_decay=0.01,               # strength of weight decay
     logging_dir=os.path.join(base_dir, "bertTraining/logs"),            # directory for storing logs
     logging_steps=10,                # log every 10 steps
     save_steps=10,                   # save checkpoint every 10 steps
     load_best_model_at_end=True,     # load the best model when finished training (based on validation)
+    metric_for_best_model="eval_loss",
+    greater_is_better=False,
+    patience=5,
     fp16=True,
     #use_ipex=True,
     #use_cpu=True,
@@ -131,5 +134,9 @@ accuracy = accuracy_score(labels, pred_classes)
 
 print(f"ACCURACY ON TEST: {accuracy}")
 
-model.save_pretrained(os.path.join(base_dir, "bertTraining/models/tfigm"))
-tokenizer.save_pretrained(os.path.join(base_dir, "bertTraining/models/tfidf"))
+model_path = os.path.join(base_dir, "bertTraining/models/tfidf/extra/model")
+tok_path = os.path.join(base_dir, "bertTraining/models/tfidf/extra/tokenizer")
+os.makedirs(model_path, exist_ok=True)
+os.makedirs(tok_path, exist_ok=True)
+model.save_pretrained(model_path);
+tokenizer.save_pretrained(tok_path)
