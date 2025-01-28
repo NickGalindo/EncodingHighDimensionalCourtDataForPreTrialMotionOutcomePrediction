@@ -42,7 +42,7 @@ test_data = pd.read_csv(os.path.join(base_dir, "mapped_full_test.csv"))
 test_data = test_data[["filepath", "document_no", "MotionResultCode"]]
 test_data["label"] = test_data["MotionResultCode"].apply(lambda x: 1 if x == "GR" else 0)
 
-full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/tfidf"), "indexed_text.pkl"), "rb"))
+full_corpus = pickle.load(open(os.path.join(os.path.join(base_dir, "textData/alltext"), "indexed_text.pkl"), "rb"))
 
 train_data["text"] = train_data["document_no"].map(full_corpus)
 val_data["text"] = val_data["document_no"].map(full_corpus)
@@ -105,6 +105,7 @@ training_args = TrainingArguments(
     load_best_model_at_end=True,     # load the best model when finished training (based on validation)
     metric_for_best_model="eval_loss",
     fp16=True,
+    torch_compile=True,
     #use_ipex=True,
     #use_cpu=True,
     report_to='wandb'
@@ -132,8 +133,8 @@ accuracy = accuracy_score(labels, pred_classes)
 
 print(f"ACCURACY ON TEST: {accuracy}")
 
-model_path = os.path.join(base_dir, "bertTraining/models/tfidf/legal_extra/model")
-tok_path = os.path.join(base_dir, "bertTraining/models/tfidf/legal_extra/tokenizer")
+model_path = os.path.join(base_dir, "bertTraining/models/alltext/legal_extra/model")
+tok_path = os.path.join(base_dir, "bertTraining/models/alltext/legal_extra/tokenizer")
 os.makedirs(model_path, exist_ok=True)
 os.makedirs(tok_path, exist_ok=True)
 model.save_pretrained(model_path);
